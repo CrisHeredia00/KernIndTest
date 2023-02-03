@@ -1,19 +1,29 @@
-QuasiIndependenceTest = function(Nboot=500,X.ob,T.ob,Delta,alpha=0.05,K.fun="gaussianKernel",L.fun="gaussianKernel", kpar = list("sigma" = 1, "l" = 1))
+# data must be a data.frame with: X.ob,T.ob,Delta (with order)
+QuasiIndependenceTest = function(data,Nboot=500,alpha=0.05,K.fun="gaussianKernel",L.fun="gaussianKernel",K.par=list("sigma"=1,"l"=1),L.par=list("sigma"=1,"l"=1))
 {
+  # Separating values into vectors
+  X.ob = data[[1]]
+  T.ob = data[[2]]
+  Delta = data[[3]]
+
   #Checking section
   #Data type
-  try(if (is.numeric(Nboot) != TRUE) stop("Nboot must be a number"))
-  try(if (is.numeric(X.ob) != TRUE) stop("X.ob must be a vector containing numbers"))
-  try(if (is.numeric(T.ob) != TRUE) stop("T.ob must be a vector containing numbers"))
-  try(if (all(Delta %in% c(0,1)) == FALSE) stop("Delta must be a vector contaning only zeros or ones"))
-  try(if (is.numeric(alpha) != TRUE) stop ("alpha must be a number"))
+  #Los errores no terminan la ejecuion!
+  if (is.numeric(X.ob) != TRUE) stop("X.ob must be a vector containing numbers")
+  if (is.numeric(T.ob) != TRUE) stop("T.ob must be a vector containing numbers")
+  if (all(Delta %in% c(0,1)) == FALSE) stop("Delta must be a vector contaning only zeros or ones")
+  if (is.numeric(Nboot) != TRUE) stop("Nboot must be a number")
+  if (is.numeric(alpha) != TRUE) stop ("alpha must be a number")
 
   try(if (any(X.ob > T.ob)) stop("Left truncation time (X.ob) must be smaller than observed failure time (T.ob)"))
 
+  #try(if (is.function(K.fun) != TRUE) stop ("K.fun must be a function"))
+  #try(if (is.function(L.fun) != TRUE) stop ("L.fun must be a function"))
 
-  #De momento las dos funciones usan el mismo kpar
-  K.fun = do.call(K.fun,kpar)
-  L.fun = do.call(L.fun,kpar)
+  # Test
+  #De momento solo funcionan con la implementacion del paquete
+  K.fun = do.call(K.fun,K.par)
+  L.fun = do.call(L.fun,L.par)
 
 
   n=length(X.ob) #Number of observations
@@ -36,6 +46,7 @@ QuasiIndependenceTest = function(Nboot=500,X.ob,T.ob,Delta,alpha=0.05,K.fun="gau
 
   #Wild bootstrap
   #WBoot: Wild Bootstrap sample
+  #Me parece que no es optimo
   BSLR=c()
   for(kk in 1:Nboot)
   {
@@ -55,10 +66,5 @@ QuasiIndependenceTest = function(Nboot=500,X.ob,T.ob,Delta,alpha=0.05,K.fun="gau
 
   #return(list(T.stat=T.stat,WBoot=BSLR,result=result, pvalue = p_value))
 }
-# data <- simDataQI(50)
-# X.ob=data[["X.ob"]]
-# T.ob=data[["T.ob"]]
-# Delta=data[["Delta"]]
-
-QuasiIndependenceTest(500, X.ob, T.ob, Delta)
-# a["w.boot"]
+# data <- simDataQI(50, dependence_factor=0)
+# QuasiIndependenceTest(data)

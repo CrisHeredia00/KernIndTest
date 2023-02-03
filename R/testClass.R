@@ -13,9 +13,9 @@ setClass(Class = "TestResult",
          validity=function(object){
            cat("~~~ Test: inspector ~~~ \n")
            if(object@p.value < 0)
-             stop ("p-value must be greater than cero")
+             stop ("p-value must be greater or equal to zero")
            if(object@p.value > 1)
-             stop ("p-value must be lower than one")
+             stop ("p-value must be lower or equal to one")
            return(TRUE)
          }
 )
@@ -42,16 +42,35 @@ setMethod("show",signature(object="TestResult"),
 setClass(Class = "QuasiIndependenceTest", contains = "TestResult")
 setMethod("show",signature(object="QuasiIndependenceTest"),
           function(object) {
-            cat("*** Quasi independence test ***\n")
+            cat("*** Quasi Independence Test ***\n")
             cat("* alternative hypothesis: Not Quasi-independent *\n")
             cat("* null hypothesis: Quasi-independent *\n")
             cat(paste("p-value:", object@p.value,"\n"))
-            if (isTRUE(object@result) && object@result == FALSE){
+            cat(paste("t.stat: ", object@t.stat, "\n"))
+            if (isTRUE(object@result) && object@result == FALSE){ #&& por como funciona R
               cat("result: it rejects the null hypothesis\n")#p valor bajo
             } else {
               cat("result: there is no enough information to reject the null hypothesis\n") #p valor alto
             }
-            cat(paste("t.stat: ", object@t.stat, "\n"))
           }
 )
 # new("QuasiIndependenceTest")
+
+
+#Two Sample Test
+setClass(Class = "TwoSampleTest", contains = "TestResult")
+setMethod("show",signature(object="TwoSampleTest"),
+          function(object) {
+            cat("*** Two Sample Test ***\n")
+            cat("* alternative hypothesis: The groups don't have the same distribution *\n")
+            cat("* null hypothesis: The groups have the same distribution *\n")
+            cat("p-value:", object@p.value,"\n")
+            cat(paste("t.stat: ", object@t.stat, "\n"))
+            if (isTRUE(object@result) && object@result == FALSE){ #&& por como funciona R
+              cat("result: it rejects the null hypothesis\n")#p valor bajo
+            } else {
+              cat("result: there is no enough information to reject the null hypothesis\n") #p valor alto
+            }
+          }
+)
+# new("TwoSampleTest")
