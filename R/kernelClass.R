@@ -75,6 +75,58 @@ rationalQuadraticKernel <- function(sigma=1, l=1, alpha = -1, ...)
 setClass("RationalQuadraticKernel",prototype=structure(.Data=function(){},kpar=list()),contains=c("Kernel"))
 
 
+
+periodicKernel <- function(sigma=1, l=1, p=1,...)
+{
+  rval <- function(x,y)
+  {
+    #Checking Data:
+    if (is.vector(x) == TRUE & is.vector(y) == TRUE){
+      if (length(x) != length(y)) stop("Vectors must be the same size") #No se si es cierto
+    } else {
+      stop("Kernel function receives vectors") #Añadir que pueda calcular matrices
+    }
+
+    if (is.numeric(x) != TRUE) stop("Kernel function must have receive a vector with numbers")
+    if (is.numeric(y) != TRUE) stop("Kernel function must have receive a vector with numbers")
+
+    # Defined for vectors
+    # CALCULO DEL KERNEL
+    K.fun=function(xi,xj) (sigma^2)*exp(-(2*(sin(pi*abs(xi-xj)/p))^2)/l^2)
+    KMatrix = outer(x,y,FUN=K.fun)
+    return(new("GramMatrix",KMatrix))
+  }
+  return(new("PeriodicKernel",.Data=rval,kpar=list(sigma=sigma, l=l, alpha = alpha)))
+}
+setClass("PeriodicKernel",prototype=structure(.Data=function(){},kpar=list()),contains=c("Kernel"))
+
+
+
+locallyPeriodicKernel <- function(sigma=1, l=1, p=1,...)
+{
+  rval <- function(x,y)
+  {
+    #Checking Data:
+    if (is.vector(x) == TRUE & is.vector(y) == TRUE){
+      if (length(x) != length(y)) stop("Vectors must be the same size") #No se si es cierto
+    } else {
+      stop("Kernel function receives vectors") #Añadir que pueda calcular matrices
+    }
+
+    if (is.numeric(x) != TRUE) stop("Kernel function must have receive a vector with numbers")
+    if (is.numeric(y) != TRUE) stop("Kernel function must have receive a vector with numbers")
+
+    # Defined for vectors
+    # CALCULO DEL KERNEL
+    K.fun=function(xi,xj) (sigma^2)*exp(-(2*(sin(pi*abs(xi-xj)/p))^2)/l^2)*exp(-abs(xi-xj)^2/(2*l^2))
+    KMatrix = outer(x,y,FUN=K.fun)
+    return(new("GramMatrix",KMatrix))
+  }
+  return(new("LocallyPeriodicKernel",.Data=rval,kpar=list(sigma=sigma, l=l, alpha = alpha)))
+}
+setClass("LocallyPeriodicKernel",prototype=structure(.Data=function(){},kpar=list()),contains=c("Kernel"))
+
+
 ## Show method for kernel functions
 setMethod("show",signature(object="Kernel"),
           function(object)
@@ -82,6 +134,8 @@ setMethod("show",signature(object="Kernel"),
             switch(class(object),
                    "GaussianKernel" = cat(paste("Gaussian Kernel function.", "\n","Hyperparameters :\n", "\t sigma = ", get_kpar(object)$sigma, "\n","\t lengthscale = ", get_kpar(object)$l)),
                    "RationalQuadraticKernel" = cat(paste("Rational Quadratic Kernel function.", "\n","Hyperparameters :\n", "\t sigma = ", get_kpar(object)$sigma, "\n","\t lengthscale = ", get_kpar(object)$l,"\n", "\t alpha = ", get_kpar(object)$alpha)),
+                   "PeriodicKernel" = cat(paste("Periodic Kernel function.", "\n","Hyperparameters :\n", "\t sigma = ", get_kpar(object)$sigma, "\n","\t lengthscale = ", get_kpar(object)$l, "\t period = ", get_kpar(object)$period)),
+                   "LocallyPeriodicKernel" = cat(paste("Locally Periodic Kernel function.", "\n","Hyperparameters :\n", "\t sigma = ", get_kpar(object)$sigma, "\n","\t lengthscale = ", get_kpar(object)$l, "\t period = ", get_kpar(object)$period)),
             )
           }
         )
