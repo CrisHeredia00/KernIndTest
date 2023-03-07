@@ -59,12 +59,14 @@ QuasiIndependenceTest = function(data,Nboot=500,alpha=0.05,K.fun="gaussianKernel
 
   #Decision calculation
   quantile = quantile(BSLR,1-alpha)
-  result = T.stat<=quantile
+  print(quantile)
+  result = T.stat<=quantile #resultado true no rechaza hipotesis nula
+  print(result)
   p_value = mean(T.stat<BSLR)
   return(new("QuasiIndependenceTest",t.stat = T.stat, w.boot = BSLR, result = result, p.value = p_value))
 
 
   #return(list(T.stat=T.stat,WBoot=BSLR,result=result, pvalue = p_value))
 }
-# data <- simDataQI(50, dependence_factor=0)
-# QuasiIndependenceTest(data)
+data <- simDataQI(50, dependence_factor=0)
+QuasiIndependenceTest(data)

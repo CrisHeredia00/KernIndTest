@@ -141,13 +141,16 @@ setMethod("show",signature(object="Kernel"),
         )
 
 #Example of use
-# a = gaussianKernel(sigma = 2, l = 1)
+a = gaussianKernel(sigma = 2, l = 1)
+
+
 # new("gaussianKernel")
 # b = rationalQuadraticKernel()
 # show(a)
 # show(b)
-# z1 = 1:3
-# z2 = 4:6
+z1 = 1:3
+z2 = 4:6
+a(z1,z2)
 # b(z1,z2)
 
 #asi es como internamente usa kernel kernlab (ignorar)

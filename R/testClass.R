@@ -47,7 +47,7 @@ setMethod("show",signature(object="QuasiIndependenceTest"),
             cat("* null hypothesis: Quasi-independent *\n")
             cat(paste("p-value:", object@p.value,"\n"))
             cat(paste("t.stat: ", object@t.stat, "\n"))
-            if (isTRUE(object@result) && object@result == FALSE){ #&& por como funciona R
+            if (isTRUE(object@result) && object@result == TRUE){ #&& por como funciona R
               cat("result: it rejects the null hypothesis\n")#p valor bajo
             } else {
               cat("result: there is no enough information to reject the null hypothesis\n") #p valor alto
@@ -66,7 +66,7 @@ setMethod("show",signature(object="TwoSampleTest"),
             cat("* null hypothesis: The groups have the same distribution *\n")
             cat("p-value:", object@p.value,"\n")
             cat(paste("t.stat: ", object@t.stat, "\n"))
-            if (isTRUE(object@result) && object@result == FALSE){ #&& por como funciona R
+            if (isTRUE(object@result) && object@result == TRUE){ #&& por como funciona R
               cat("result: it rejects the null hypothesis\n")#p valor bajo
             } else {
               cat("result: there is no enough information to reject the null hypothesis\n") #p valor alto
@@ -74,3 +74,6 @@ setMethod("show",signature(object="TwoSampleTest"),
           }
 )
 # new("TwoSampleTest")
+
+
+
