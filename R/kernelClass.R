@@ -3,6 +3,22 @@
 ## authors : Tamara Fernandez and Cristobal Heredia
 
 ## Kernel function class
+
+
+#' Kernel class.
+#'
+#' It is a class that defines a kernel calculation using a function and its parameters.
+#'
+#' @slot  function. It receives one function that works as kernel function.
+#' @slot kpar It is a list with the parameters of the kernel function
+#'
+#' @return a kernel class
+# #'
+# #'
+# #' @examples
+# #'
+# #' @export
+# #'
 setClass(Class = "Kernel",
          representation("function",kpar="list"),
          validity=function(object){
@@ -13,7 +29,16 @@ setClass(Class = "Kernel",
          }
 )
 
-#Accessor
+#' Kpar accessor
+#'
+#' @param object it receives a kernel class
+#'
+#' @return returns the list of kernel function parameters
+#' @export
+#'
+#' @examples
+#' gaussian_kernel = gaussianKernel(sigma=1, l=1)
+#' get_kpar(gaussian_kernel)
 setGeneric("get_kpar",function(object){standardGeneric ("get_kpar")})
 setMethod("get_kpar","Kernel",function(object) return(object@kpar)) # Returns kpar list
 
@@ -25,6 +50,21 @@ setClass("GramMatrix",representation("matrix"),prototype=structure(.Data=matrix(
 ## Kernel functions
 ## Receives hyper-parameters and returns a Kernel class
 ## Kernel class calculates and returns Gram Matrix
+
+#' Gaussian Kernel function
+#'
+#' It is a function to calculate the Gram matrix from gaussian kernel.
+#'
+#' @param sigma value of sigma of gaussian kernel
+#' @param l value of lengthscale of gaussian kernel
+#'
+#' @return a Gram Matrix object from class GramMatrix
+#' @export
+#'
+#' @examples
+#' gaussian_kernel = gaussianKernel(sigma=1, l=1)
+#' z = 1:10
+#' gram_matrix = gaussian_kernel(z,z)
 gaussianKernel <- function(sigma=1, l=1, ...)
   {
   rval <- function(x,y)
@@ -50,6 +90,20 @@ gaussianKernel <- function(sigma=1, l=1, ...)
 setClass("GaussianKernel",prototype=structure(.Data=function(){},kpar=list()),contains=c("Kernel"))
 
 
+#' Rational quadratic kernel function
+#'
+#' It is a function to calculate the Gram matrix from rational quadratic kernel
+#' @param sigma value of sigma of rational quadratic kernel
+#' @param l value of lengthscale of rational quadratic kernel
+#' @param alpha value of alpha of rational quadratic kernel
+#'
+#' @return a Gram Matrix object from class GramMatrix
+#' @export
+#'
+#' @examples
+#' rational_quadratic_kernel = rationalQuadraticKernel(sigma=1, l=1, alpha = -1)
+#' z = 1:10
+#' gram_matrix = rational_quadratic_kernel(z,z)
 rationalQuadraticKernel <- function(sigma=1, l=1, alpha = -1, ...)
 {
   rval <- function(x,y)
@@ -75,7 +129,20 @@ rationalQuadraticKernel <- function(sigma=1, l=1, alpha = -1, ...)
 setClass("RationalQuadraticKernel",prototype=structure(.Data=function(){},kpar=list()),contains=c("Kernel"))
 
 
-
+#' Periodic Kernel function
+#'
+#' It is a function to calculate the Gram matrix from periodic kernel
+#' @param sigma value of sigma of periodic kernel
+#' @param l value of lengthscale of periodic kernel
+#' @param p value of period of periodic kernel
+#'
+#' @return a Gram Matrix object from class GramMatrix
+#' @export
+#'
+#' @examples
+#' periodic_kernel = periodicKernel(sigma=1, l=1, p = 1)
+#' z = 1:10
+#' gram_matrix = periodic_kernel(z,z)
 periodicKernel <- function(sigma=1, l=1, p=1,...)
 {
   rval <- function(x,y)
@@ -96,12 +163,25 @@ periodicKernel <- function(sigma=1, l=1, p=1,...)
     KMatrix = outer(x,y,FUN=K.fun)
     return(new("GramMatrix",KMatrix))
   }
-  return(new("PeriodicKernel",.Data=rval,kpar=list(sigma=sigma, l=l, alpha = alpha)))
+  return(new("PeriodicKernel",.Data=rval,kpar=list(sigma=sigma, l=l, p = p)))
 }
 setClass("PeriodicKernel",prototype=structure(.Data=function(){},kpar=list()),contains=c("Kernel"))
 
 
-
+#' Locally Periodic Kernel function
+#'
+#' It is a function to calculate the Gram matrix from periodic kernel
+#' @param sigma value of sigma of periodic kernel
+#' @param l value of lengthscale of periodic kernel
+#' @param p value of period of periodic kernel
+#'
+#' @return a Gram Matrix object from class GramMatrix
+#' @export
+#'
+#' @examples
+#' locally_periodic_kernel = locallyPeriodicKernel(sigma=1, l=1, p = 1)
+#' z = 1:10
+#' gram_matrix = locally_periodic_kernel(z,z)
 locallyPeriodicKernel <- function(sigma=1, l=1, p=1,...)
 {
   rval <- function(x,y)
@@ -122,12 +202,21 @@ locallyPeriodicKernel <- function(sigma=1, l=1, p=1,...)
     KMatrix = outer(x,y,FUN=K.fun)
     return(new("GramMatrix",KMatrix))
   }
-  return(new("LocallyPeriodicKernel",.Data=rval,kpar=list(sigma=sigma, l=l, alpha = alpha)))
+  return(new("LocallyPeriodicKernel",.Data=rval,kpar=list(sigma=sigma, l=l, p = p)))
 }
 setClass("LocallyPeriodicKernel",prototype=structure(.Data=function(){},kpar=list()),contains=c("Kernel"))
 
 
-## Show method for kernel functions
+#' Show method for kernel functions
+#'
+#' @param object Kernel.
+#'
+#' @return None
+#' @export
+#'
+#' @examples
+#' locally_periodic_kernel = locallyPeriodicKernel(sigma=1, l=1, p = 1)
+#' show(locally_periodic_kernel)
 setMethod("show",signature(object="Kernel"),
           function(object)
           {
@@ -141,16 +230,16 @@ setMethod("show",signature(object="Kernel"),
         )
 
 #Example of use
-a = gaussianKernel(sigma = 2, l = 1)
+#a = gaussianKernel(sigma = 2, l = 1)
 
 
 # new("gaussianKernel")
 # b = rationalQuadraticKernel()
 # show(a)
 # show(b)
-z1 = 1:3
-z2 = 4:6
-a(z1,z2)
+#z1 = 1:3
+#z2 = 4:6
+#a(z1,z2)
 # b(z1,z2)
 
 #asi es como internamente usa kernel kernlab (ignorar)

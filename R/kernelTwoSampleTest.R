@@ -1,7 +1,25 @@
 #' A Reproducing-Kernel-Hilbert-Space log-rank test for the two-sample problem
-
-# data must be a data.frame with: X, Delta, Group (with order)
-KernelTwoSampleTest= function(data,Nboot=500,alpha=0.05,K.fun="gaussianKernel",K.par = list("sigma"=1,"l"=1))
+#'
+#' @include kernelClass.R testClass.R simdataTST.R
+#' @param data
+#' Data must be a data.frame with: X, Delta, Group.
+#' @param Nboot
+#' Number of wildbootstrap repetitions
+#' @param alpha
+#' Significance level
+#' @param K.fun
+#' K matrix kernel function.
+#' @param K.par
+#' List of parameters of K matrix kernel function.
+#'
+#' @return
+#' Returns a Kernel Two Sample Test object.
+#' @export
+#'
+#' @examples
+#' data = simDataTST(100,150)
+#' result = KernelTwoSampleTest(data,Nboot=500,alpha=0.05,K.fun="gaussianKernel",K.par = list("sigma"=1,"l"=1))
+KernelTwoSampleTest = function(data,Nboot=500,alpha=0.05,K.fun="gaussianKernel",K.par = list("sigma"=1,"l"=1))
 {
   # Separating values into vectors
   data <- data[order(data[,1]), ]
@@ -65,16 +83,17 @@ KernelTwoSampleTest= function(data,Nboot=500,alpha=0.05,K.fun="gaussianKernel",K
   stat = (fmKer)%*%Ker%*%(fmKer)
   stat=as.numeric(stat)
   #step 5
-  result = (stat<=quantile)
+  result = isTRUE(stat<=quantile)
   #extra step
   p_value = mean(stat<out.Boot)
 
   #We return false if the test-statistic is greater than the quantile (i.e. reject the null)
-  return(new("TwoSampleTest",t.stat = stat, w.boot = out.Boot, result = result, p.value = p_value))
+  return(new("TwoSampleTest",t.stat = stat, w.boot = out.Boot, result = result, p.value = p_value, quantile = quantile))
 
 
   #return(list(T.stat=stat,WBoot=out.Boot,result=result, pvalue = p_value))
 
 }
-# data <- simDataTST(n1=100, n2=100, rate = list("t1"=3,"c1"=3,"t2"=3,"c2"=3))
-# KernelTwoSampleTest(data)
+data <- simDataTST(n1=100, n2=100, rate = list("t1"=3,"c1"=3,"t2"=3,"c2"=3))
+aa = KernelTwoSampleTest(data)
+graph_test(aa)

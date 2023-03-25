@@ -1,14 +1,19 @@
-#' Simulation Data Function for Quasi Independence Test
+#' Simulated data for Quasi Independence test
 #'
 #' @param n
 #' Number of observations of simulated data
+#' @param dependence_factor
+#' Factor of dependence between X and Y.
 #'
 #' @return
-#' A dataframe with 3 values: X.ob, T.ob and Delta.ob
+#' A dataframe with 3 values: X.ob, T.ob and Delta.ob \cr
+#' X.ob is the entry time \cr
+#' T.ob is the observed survival time \cr
+#' Delta.ob is the status indicator if the observed failure time are subjected to right-censoring. 0 = censored, 1 = event.
 #' @export
 #'
 #' @examples
-#' data = simData(100)
+#' data = simDataQI(100)
 simDataQI <- function(n, dependence_factor=0.65) {
   k <- 1
   XX <- YY <- TT <- CC <- delta <- rep(-1, n) #Vectors of length n
@@ -23,8 +28,8 @@ simDataQI <- function(n, dependence_factor=0.65) {
   data.frame(list(X.ob = XX, T.ob = TT, Delta = delta))
   #X.ob Is the entry time
   #T.ob Is the observed survival time
-  #'Delta.ob Is the status indicator if the observed failure time are subjected to right-censoring; 0 = censored, 1 = event.
+  #Delta.ob Is the status indicator if the observed failure time are subjected to right-censoring; 0 = censored, 1 = event.
 
-  #'#Los datos no son independientes, es muy poco probable que sean quasi independientes
-  #'La nula es que son quasi independientes
+  #Los datos no son independientes, es muy poco probable que sean quasi independientes
+  #La nula es que son quasi independientes
 }

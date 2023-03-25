@@ -1,11 +1,11 @@
-#' #' Simulation Data Function for Two Sample Test
+#' #' Simulated Data Function for Two Sample Test
 #'
-#' @param n0
-#' Number of observations of group 0
 #' @param n1
 #' Number of observations of group 1
+#' @param n2
+#' Number of observations of group 2
 #' @param rate
-#' A list with for values: rates for t1, c1, t2, c2
+#' A list with four values: rates for t1, c1, t2, c2
 #'
 #' @return
 #' A dataframe with 3 values: X, Delta and Group

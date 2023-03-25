@@ -1,4 +1,31 @@
-# data must be a data.frame with: X.ob,T.ob,Delta (with order)
+#' Quasi Independence Test
+#'
+#' This test was developed to determine if it exists an association between X and Y in the truncated setting.
+#'
+#' @include kernelClass.R testClass.R simdataQI.R
+#' @param data
+#' Data must be a data.frame with: X.ob,T.ob,Delta.
+#' @param Nboot
+#' WildBoostrap sample size.
+#' @param alpha
+#' Significance level
+#' @param K.fun
+#' K matrix kernel function.
+#' @param L.fun
+#' L matrix kernel function.
+#' @param K.par
+#' List of parameters of K matrix kernel function.
+#' @param L.par
+#' List of parameters of L matrix kernel function.
+#'
+#' @return
+#' Returns a Quasi Independence Test object.
+#' @export
+#'
+#' @examples
+#' data <-  simDataQI(n=50, dependence_factor=0.65)
+#'
+#' QuasiIndependenceTest(data,Nboot=500,alpha=0.05,K.fun="gaussianKernel",L.fun="gaussianKernel",K.par=list("sigma"=1,"l"=1),L.par=list("sigma"=1,"l"=1))
 QuasiIndependenceTest = function(data,Nboot=500,alpha=0.05,K.fun="gaussianKernel",L.fun="gaussianKernel",K.par=list("sigma"=1,"l"=1),L.par=list("sigma"=1,"l"=1))
 {
   # Separating values into vectors
@@ -59,14 +86,12 @@ QuasiIndependenceTest = function(data,Nboot=500,alpha=0.05,K.fun="gaussianKernel
 
   #Decision calculation
   quantile = quantile(BSLR,1-alpha)
-  print(quantile)
-  result = T.stat<=quantile #resultado true no rechaza hipotesis nula
-  print(result)
+  #print(quantile)
+  result = isTRUE(T.stat<=quantile) #resultado true no rechaza hipotesis nula
+  #print(result)
   p_value = mean(T.stat<BSLR)
-  return(new("QuasiIndependenceTest",t.stat = T.stat, w.boot = BSLR, result = result, p.value = p_value))
+  return(new("QuasiIndependenceTest",t.stat = T.stat, w.boot = BSLR, result = result, p.value = p_value, quantile = quantile))
 
 
   #return(list(T.stat=T.stat,WBoot=BSLR,result=result, pvalue = p_value))
 }
-data <- simDataQI(50, dependence_factor=0)
-QuasiIndependenceTest(data)
